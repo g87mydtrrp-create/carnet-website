@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Carnet — Your car. All the answers.</title>
+<style>
+:root{--bg:#090d10;--panel:#11181e;--panel2:#172129;--line:#29343d;--text:#f2f5f7;--muted:#a8b3bc;--lime:#d8ff43;--lime2:#bce62d;--red:#d92732;--radius:16px}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 70% 0%,#17252b 0,transparent 38%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}.wrap{max-width:1240px;margin:auto;padding:0 22px}
+header{position:sticky;top:0;z-index:10;background:#090d10ed;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;gap:24px;min-height:72px}.brand{font-size:23px;font-weight:950;font-style:italic;letter-spacing:-1px;white-space:nowrap}.brand span{color:var(--lime)}nav{display:flex;gap:5px;flex:1}nav button{background:transparent;color:#c5cdd3;border:0;border-radius:10px;padding:10px 12px}nav button.active,nav button:hover{background:#1c262d;color:white}.nav-right{display:flex;align-items:center;gap:10px}.small-btn,.icon-btn{border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:10px;padding:9px 12px}.primary{background:var(--lime);color:#11170b;border:0;border-radius:10px;padding:11px 16px;font-weight:850}.primary:hover{background:#e5ff79}.ghost{background:transparent;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:10px 13px}.hero{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:center;padding:40px 0 28px}.eyebrow{color:var(--lime);font-weight:800;text-transform:uppercase;letter-spacing:2px;font-size:12px}.hero h1{font-size:clamp(38px,5vw,66px);line-height:.98;letter-spacing:-2.8px;margin:12px 0 18px;max-width:620px}.hero h1 span{color:var(--lime)}.hero p{font-size:17px;color:#c2cbd1;max-width:520px}.searchbox{display:flex;gap:8px;background:#f4f6f6;padding:7px;border-radius:13px;max-width:520px;margin:22px 0 10px}.searchbox select{min-width:0;flex:1;border:0;background:transparent;color:#172027;padding:8px;outline:none}.searchbox button{white-space:nowrap}.hint{color:var(--muted);font-size:12px}.car-art{position:relative;min-height:310px;display:flex;align-items:center;justify-content:center;overflow:hidden;border:1px solid #33434a;border-radius:22px;background:linear-gradient(145deg,#25353c,#10181e 58%,#080c0f);isolation:isolate}.car-art:before{content:"";position:absolute;width:450px;height:190px;border-radius:50%;background:#d9273228;filter:blur(34px);top:48px;right:0;z-index:-1}.car-art img{width:100%;height:310px;object-fit:cover;mix-blend-mode:screen;opacity:.93}.car-caption{position:absolute;left:18px;bottom:16px;background:#080d10d9;border:1px solid #35434a;border-radius:11px;padding:10px 13px}.car-caption b{display:block}.car-caption span{font-size:12px;color:#b7c0c6}.section-title{display:flex;align-items:end;justify-content:space-between;gap:16px;margin:22px 0 13px}.section-title h2{font-size:22px;margin:0;letter-spacing:-.6px}.section-title p{margin:4px 0 0;color:var(--muted);font-size:13px}.tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.tile,.panel{background:linear-gradient(150deg,#141d23,#0e1419);border:1px solid var(--line);border-radius:var(--radius);padding:17px}.tile .ico{font-size:23px;margin-bottom:10px}.tile h3{margin:0 0 5px;font-size:15px}.tile p{color:var(--muted);font-size:13px;margin:0}.layout{display:grid;grid-template-columns:1.25fr .75fr;gap:14px;margin-top:14px}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}.panel h3{margin:0;font-size:17px}.pill{font-size:11px;background:#27321a;color:var(--lime);border:1px solid #45552a;padding:4px 8px;border-radius:99px;font-weight:800}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.tabs button{border:1px solid var(--line);background:#111920;color:#b7c2c9;border-radius:9px;padding:8px 11px;font-size:13px}.tabs button.active{background:var(--lime);border-color:var(--lime);color:#10160b;font-weight:800}.searchrow{display:flex;gap:8px;margin:12px 0}.searchrow input,.field,input,select,textarea{background:#0a1014;border:1px solid #33414a;color:var(--text);border-radius:9px;padding:11px;min-width:0}.searchrow input{flex:1;width:100%}.results{display:grid;gap:9px}.result{display:flex;gap:12px;align-items:center;border:1px solid #27343d;background:#10171d;border-radius:12px;padding:11px}.result .thumb{width:76px;height:65px;flex-shrink:0;border-radius:9px;display:grid;place-items:center;background:linear-gradient(140deg,#29363d,#0a0f13);font-size:26px}.result h4{margin:0 0 3px;font-size:14px}.result p{margin:0;color:var(--muted);font-size:12px}.result .price{margin-left:auto;text-align:right;white-space:nowrap}.price b{display:block;color:var(--lime)}.price button{margin-top:6px}.forum-item{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid #26323a}.forum-item:last-child{border:0}.avatar{width:35px;height:35px;display:grid;place-items:center;border-radius:50%;background:#283a40;color:var(--lime);font-weight:900;flex-shrink:0}.forum-item h4{font-size:13px;margin:0 0 3px}.forum-item p{font-size:12px;color:var(--muted);margin:0}.forum-item small{color:#8b989f}.garage{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0 40px}.modline{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid #27333b}.modline:last-child{border:0}.modicon{width:39px;height:39px;display:grid;place-items:center;border-radius:10px;background:#202b30}.modline div:nth-child(2){flex:1}.modline b{font-size:13px}.modline small{display:block;color:var(--muted);font-size:11px}.modline strong{color:var(--lime);font-size:13px}.assistant{border:1px solid #4b5c2b;background:linear-gradient(135deg,#1b2619,#101719);border-radius:15px;padding:16px}.assistant-top{display:flex;gap:10px;align-items:center}.ai-dot{width:36px;height:36px;border-radius:11px;background:var(--lime);color:#11170b;display:grid;place-items:center;font-weight:950}.assistant h3{margin:0}.assistant p{color:#b9c6b0;font-size:12px;margin:2px 0}.chatlog{min-height:86px;max-height:230px;overflow:auto;display:flex;flex-direction:column;gap:8px;margin:14px 0}.bubble{padding:10px 12px;border-radius:12px;max-width:90%;font-size:13px}.bubble.bot{background:#202c25;border:1px solid #354832;align-self:flex-start}.bubble.user{background:#d8ff43;color:#151a0c;align-self:flex-end}.chat-input{display:flex;gap:7px}.chat-input input{flex:1;width:100%}.disclaimer{font-size:11px;color:#9ba7a1;margin-top:9px}.footer{border-top:1px solid var(--line);padding:24px 0;color:#8f9ba3;font-size:12px}.page{display:none;padding:24px 0 40px}.page.active{display:block}.subhero{padding:20px 0}.subhero h1{font-size:38px;margin:5px 0}.subhero p{color:var(--muted);margin:0}.vehicle-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.vehicle-card{border:1px solid var(--line);border-radius:14px;padding:15px;background:var(--panel)}.vehicle-card h3{margin:8px 0 3px}.vehicle-card p{margin:0 0 12px;color:var(--muted);font-size:13px}.big-emoji{font-size:34px;background:#202b31;border-radius:11px;padding:8px;width:60px;text-align:center}.empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed #35424a;border-radius:12px}.modal{position:fixed;inset:0;background:#000b;display:none;align-items:center;justify-content:center;padding:20px;z-index:30}.modal.open{display:flex}.modal-card{max-width:480px;width:100%;background:#11191f;border:1px solid #3a474f;border-radius:18px;padding:22px}.modal-card h2{margin:0 0 8px}.modal-card p{color:var(--muted);font-size:13px}.modal-card label{display:block;font-size:12px;color:#b7c1c8;margin:12px 0 5px}.modal-card input,.modal-card select{width:100%}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.toast{position:fixed;bottom:18px;right:18px;background:var(--lime);color:#11170b;padding:12px 16px;border-radius:12px;font-weight:800;box-shadow:0 8px 40px #0008;display:none;z-index:50}.toast.show{display:block}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-offset:2px}
+@media(max-width:850px){.nav{gap:10px;flex-wrap:wrap;padding:12px 0}nav{order:3;overflow:auto;width:100%;flex-basis:100%}nav button{white-space:nowrap}.hero{grid-template-columns:1fr;padding-top:26px}.car-art{min-height:230px}.car-art img{height:230px}.tiles{grid-template-columns:repeat(2,1fr)}.layout,.garage{grid-template-columns:1fr}.vehicle-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.wrap{padding:0 13px}.hero h1{font-size:42px}.searchbox{flex-wrap:wrap}.searchbox select{flex-basis:100%}.searchbox button{width:100%}.tiles{gap:8px}.tile{padding:13px}.vehicle-grid{grid-template-columns:1fr}.nav-right .small-btn{display:none}.section-title h2{font-size:19px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="wrap nav">
+  <a class="brand" href="#" onclick="showPage('home');return false">CAR<span>NET</span></a>
+  <nav id="nav">
+   <button class="active" data-page="home">Home</button><button data-page="search">Search</button><button data-page="cars">Cars</button><button data-page="mods">Mods</button><button data-page="guides">Guides</button><button data-page="forums">Forums</button><button data-page="community">Community</button>
+  </nav>
+  <div class="nav-right"><button class="icon-btn" title="Search" onclick="showPage('search')">⌕</button><button class="small-btn" onclick="openModal('profileModal')">My garage ↗</button></div>
+ </div>
+</header>
+<main class="wrap">
+<section id="page-home" class="page active">
+ <div class="hero">
+  <div>
+   <div class="eyebrow">Built around your car</div>
+   <h1>YOUR CAR.<br>ALL THE ANSWERS.<br><span>ONE COMMUNITY.</span></h1>
+   <p>Parts, mods, repairs and real advice from people who own your car. Find what fits, learn how it works, and build something you're proud of.</p>
+   <div class="searchbox">
+    <select id="heroMake" aria-label="Choose make"><option value="">Choose make</option><option>Citroën</option><option>Ford</option><option>Toyota</option><option>Volkswagen</option><option>BMW</option><option>Vauxhall</option><option>Nissan</option><option>Kia</option><option>Hyundai</option><option>MG</option><option>Tesla</option><option>MINI</option><option>Volvo</option><option>Audi</option><option>Skoda</option></select>
+    <select id="heroModel" aria-label="Choose model"><option value="">Choose model</option></select>
+    <button class="primary" onclick="findHeroCar()">Find my car →</button>
+   </div>
+   <div class="hint">⌁ Or browse by make and model — no registration needed.</div>
+  </div>
+  <div class="car-art">
+   <img src="https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1100&q=85" alt="Sporty red car on a road" onerror="this.style.display='none';document.getElementById('fallbackCar').style.display='block'">
+   <div id="fallbackCar" style="display:none;font-size:100px">🚗</div>
+   <div class="car-caption"><b>Citroën C1 · 2012–2014</b><span>1.0 petrol · Example vehicle profile</span></div>
+  </div>
+ </div>
+ <div class="section-title"><div><h2>Everything for your car</h2><p>One place to research, repair, modify and connect.</p></div><span class="pill">THE CARNET WAY</span></div>
+ <div class="tiles">
+  <div class="tile"><div class="ico">🔧</div><h3>Parts & Mods</h3><p>Explore upgrades and replacement parts for your selected model.</p></div>
+  <div class="tile"><div class="ico">▶</div><h3>How-to Guides</h3><p>Step-by-step tutorials and useful videos in one place.</p></div>
+  <div class="tile"><div class="ico">▤</div><h3>Car Communities</h3><p>Ask questions and learn from other owners.</p></div>
+  <div class="tile"><div class="ico">📸</div><h3>Builds & Inspiration</h3><p>Discover builds, track changes and share your own.</p></div>
+ </div>
+ <div class="layout">
+  <div class="panel">
+   <div class="panel-head"><h3>Search for your car</h3><span class="pill">MANUAL SELECTOR</span></div>
+   <div class="searchrow"><input id="homeSearch" placeholder="Search a car, part, guide or question…" oninput="renderSearch('homeSearch','homeResults')"><button class="primary" onclick="showPage('search')">Search</button></div>
+   <div id="homeResults" class="results"></div>
+  </div>
+  <div class="panel">
+   <div class="panel-head"><h3>Latest from the community</h3><button class="ghost" onclick="showPage('forums')">View forum →</button></div>
+   <div id="homeForum"></div>
+  </div>
+ </div>
+ <div class="garage">
+  <div class="panel">
+   <div class="panel-head"><h3>Demo garage</h3><span class="pill">EXAMPLE PROFILE</span></div>
+   <div class="modline"><div class="modicon">🚗</div><div><b>Citroën C1 (2013)</b><small>1.0 VTR · Red · Example build</small></div><button class="ghost" onclick="selectVehicle('Citroën','C1','2012–2014','1.0 petrol')">Open</button></div>
+   <div class="modline"><div class="modicon">🧰</div><div><b>Modification ideas</b><small>Intake · exhaust · wheels · lighting</small></div><button class="ghost" onclick="showPage('mods')">Explore</button></div>
+  </div>
+  <div class="assistant">
+   <div class="assistant-top"><div class="ai-dot">AI</div><div><h3>CARNET AI</h3><p>Ask about your car · Demo assistant</p></div><span class="pill" style="margin-left:auto">PREVIEW</span></div>
+   <div class="chatlog" id="chatlog"><div class="bubble bot">Hi! I'm the Carnet demo assistant. Ask about finding parts, choosing a guide or using the prototype. My answers are examples, not live mechanical diagnosis.</div></div>
+   <div class="chat-input"><input id="chatInput" placeholder="Ask a question…" onkeydown="if(event.key==='Enter')sendChat()"><button class="primary" onclick="sendChat()">Send ↑</button></div>
+   <div class="disclaimer">Demo only: this chat is not connected to an AI API or live vehicle data yet.</div>
+  </div>
+ </div>
+</section>
+
+<section id="page-search" class="page">
+ <div class="subhero"><div class="eyebrow">Find what fits</div><h1>Search Carnet</h1><p>Search demo parts, guides, modifications and discussions.</p></div>
+ <div class="panel">
+  <div class="searchrow"><input id="mainSearch" placeholder="Try “exhaust”, “spark plugs” or “reliability”…" oninput="renderSearch('mainSearch','mainResults')"><button class="primary" onclick="renderSearch('mainSearch','mainResults')">Search</button></div>
+  <div class="tabs" id="searchFilters"><button class="active" data-filter="All">All</button><button data-filter="Parts">Parts</button><button data-filter="Mods">Mods</button><button data-filter="Guides">Guides</button><button data-filter="Forums">Forums</button></div>
+  <div id="mainResults" class="results"></div>
+ </div>
+</section>
+
+<section id="page-cars" class="page">
+ <div class="subhero"><div class="eyebrow">UK-focused vehicle catalogue</div><h1>Browse cars</h1><p>Popular UK models across small cars, family SUVs and EVs. Choose a vehicle manually. Registration lookup can be added later.</p></div>
+ <div class="searchrow"><input id="carSearch" placeholder="Filter makes and models…" oninput="renderCars()"><button class="primary" onclick="openModal('addCarModal')">＋ Request a car</button></div>
+ <div id="vehicleGrid" class="vehicle-grid"></div>
+</section>
+
+<section id="page-mods" class="page">
+ <div class="subhero"><div class="eyebrow">Make it yours</div><h1>Parts & modifications</h1><p>Ideas and example listings for the selected vehicle. Check fitment before buying.</p></div>
+ <div class="tabs" id="modFilters"><button class="active" data-filter="All">All</button><button data-filter="Performance">Performance</button><button data-filter="Styling">Styling</button><button data-filter="Maintenance">Maintenance</button></div>
+ <div id="modResults" class="vehicle-grid"></div>
+</section>
+
+<section id="page-guides" class="page">
+ <div class="subhero"><div class="eyebrow">Learn by doing</div><h1>Guides & videos</h1><p>Curated example guides. Always confirm a guide applies to your exact vehicle.</p></div>
+ <div class="searchrow"><input id="guideSearch" placeholder="Search guides…" oninput="renderGuides()"></div>
+ <div id="guideResults" class="results"></div>
+</section>
+
+<section id="page-forums" class="page">
+ <div class="subhero"><div class="eyebrow">Ask. Share. Learn.</div><h1>Community forum</h1><p>Demo discussions for car owners. Add a post to try the interaction.</p></div>
+ <div class="panel">
+  <div class="panel-head"><h3>Recent discussions</h3><button class="primary" onclick="openModal('postModal')">＋ New discussion</button></div>
+  <div id="forumList"></div>
+ </div>
+</section>
+
+<section id="page-community" class="page">
+ <div class="subhero"><div class="eyebrow">Built by owners</div><h1>Your garage, your story</h1><p>Save a vehicle, record modifications and build your profile.</p></div>
+ <div class="layout">
+  <div class="panel"><div class="panel-head"><h3>My garage</h3><button class="primary" onclick="openModal('profileModal')">＋ Add car</button></div><div id="garageList"></div></div>
+  <div class="panel"><div class="panel-head"><h3>My modifications</h3><button class="ghost" onclick="openModal('modModal')">＋ Add mod</button></div><div id="myMods"></div></div>
+ </div>
+</section>
+<footer class="footer"><div class="brand">CAR<span>NET</span></div><p>Carnet prototype · Demo data only · Not affiliated with any vehicle manufacturer.</p><p>Before launch: verify technical information, confirm parts compatibility, protect user data and moderate community content.</p></footer>
+</main>
+
+<div class="modal" id="profileModal"><div class="modal-card"><h2>Add a car to your garage</h2><p>Select a vehicle manually. This prototype saves changes in this browser only.</p><label>Make</label><select id="garageMake"><option>Citroën</option><option>Ford</option><option>Toyota</option><option>Volkswagen</option><option>BMW</option><option>Vauxhall</option><option>Nissan</option><option>Kia</option><option>Hyundai</option><option>MG</option><option>Tesla</option><option>MINI</option><option>Volvo</option><option>Audi</option><option>Škoda</option><option>Honda</option></select><label>Model</label><select id="garageModel"><option>C1</option><option>Fiesta</option><option>Puma</option><option>Yaris</option><option>Yaris Cross</option><option>Golf</option><option>Polo</option><option>Tiguan</option><option>3 Series</option><option>1 Series</option><option>Civic</option><option>Corsa</option><option>Qashqai</option><option>Juke</option><option>Sportage</option><option>Tucson</option><option>ZS</option><option>HS</option><option>Model 3</option><option>Model Y</option><option>Cooper</option><option>XC40</option><option>A3</option><option>Octavia</option><option>Enyaq</option></select><label>Year or generation</label><input id="garageYear" placeholder="e.g. 2013 or 2012–2014"><div class="modal-actions"><button class="ghost" onclick="closeModal('profileModal')">Cancel</button><button class="primary" onclick="addGarageCar()">Save car</button></div></div></div>
+<div class="modal" id="addCarModal"><div class="modal-card"><h2>Request a vehicle</h2><p>In the real site, this would send a request for review. Here it adds a demo card.</p><label>Make</label><input id="reqMake" placeholder="e.g. Honda"><label>Model</label><input id="reqModel" placeholder="e.g. Civic"><label>Year / generation (optional)</label><input id="reqYear" placeholder="e.g. 2017–2021"><div class="modal-actions"><button class="ghost" onclick="closeModal('addCarModal')">Cancel</button><button class="primary" onclick="requestCar()">Add demo entry</button></div></div></div>
+<div class="modal" id="postModal"><div class="modal-card"><h2>Start a discussion</h2><p>Share a question with the demo community.</p><label>Discussion title</label><input id="postTitle" placeholder="e.g. Which tyres would you recommend?"><label>Details</label><textarea id="postBody" rows="4" placeholder="Add a little detail…"></textarea><div class="modal-actions"><button class="ghost" onclick="closeModal('postModal')">Cancel</button><button class="primary" onclick="addPost()">Publish demo post</button></div></div></div>
+<div class="modal" id="modModal"><div class="modal-card"><h2>Add a modification</h2><p>Record a change to your demo garage.</p><label>Modification</label><input id="modName" placeholder="e.g. All-weather floor mats"><label>Cost (£, optional)</label><input id="modCost" type="number" min="0" placeholder="e.g. 45"><div class="modal-actions"><button class="ghost" onclick="closeModal('modModal')">Cancel</button><button class="primary" onclick="addMod()">Save mod</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const vehicles=[
+ {make:"Citroën",model:"C1",years:"2005–2022",engine:"1.0 petrol / 1.2 petrol (generation dependent)",desc:"Small city car · Demo profile; confirm exact generation",icon:"🚗"},
+ {make:"Ford",model:"Fiesta",years:"2008–2023",engine:"Petrol / diesel variants",desc:"Popular supermini · Demo catalogue entry",icon:"🚙"},
+ {make:"Ford",model:"Puma",years:"2019–present",engine:"Petrol mild-hybrid variants",desc:"Popular UK crossover · Demo catalogue entry",icon:"🚙"},
+ {make:"Toyota",model:"Yaris",years:"2011–present",engine:"Petrol / hybrid variants",desc:"Small hatchback · Demo catalogue entry",icon:"🚘"},
+ {make:"Toyota",model:"Yaris Cross",years:"2021–present",engine:"Hybrid variants",desc:"Small SUV · Demo catalogue entry",icon:"🚙"},
+ {make:"Volkswagen",model:"Golf",years:"2008–present",engine:"Petrol / diesel / hybrid variants",desc:"Popular hatchback · Demo catalogue entry",icon:"🚗"},
+ {make:"Volkswagen",model:"Polo",years:"2009–present",engine:"Petrol / diesel variants by year",desc:"Supermini · Demo catalogue entry",icon:"🚗"},
+ {make:"Volkswagen",model:"Tiguan",years:"2007–present",engine:"Petrol / diesel / plug-in hybrid variants",desc:"Family SUV · Demo catalogue entry",icon:"🚙"},
+ {make:"BMW",model:"3 Series",years:"2005–present",engine:"Petrol / diesel / hybrid variants",desc:"Saloon / Touring · Demo catalogue entry",icon:"🚘"},
+ {make:"BMW",model:"1 Series",years:"2004–present",engine:"Petrol / diesel variants",desc:"Premium hatchback · Demo catalogue entry",icon:"🚘"},
+ {make:"Honda",model:"Civic",years:"2006–present",engine:"Petrol / diesel / hybrid variants by generation",desc:"Hatchback · Demo catalogue entry",icon:"🚙"},
+ {make:"Vauxhall",model:"Corsa",years:"2006–present",engine:"Petrol / diesel / electric variants",desc:"Popular supermini · Demo catalogue entry",icon:"🚗"},
+ {make:"Nissan",model:"Qashqai",years:"2007–present",engine:"Petrol / diesel / e-POWER variants",desc:"Popular family crossover · Demo catalogue entry",icon:"🚙"},
+ {make:"Nissan",model:"Juke",years:"2010–present",engine:"Petrol / hybrid variants by generation",desc:"Compact crossover · Demo catalogue entry",icon:"🚙"},
+ {make:"Kia",model:"Sportage",years:"2004–present",engine:"Petrol / diesel / hybrid / PHEV variants",desc:"Popular family SUV · Demo catalogue entry",icon:"🚙"},
+ {make:"Hyundai",model:"Tucson",years:"2004–present",engine:"Petrol / diesel / hybrid / PHEV variants",desc:"Family SUV · Demo catalogue entry",icon:"🚙"},
+ {make:"MG",model:"ZS",years:"2017–present",engine:"Petrol / electric variants by generation",desc:"Compact SUV · Demo catalogue entry",icon:"🚙"},
+ {make:"MG",model:"HS",years:"2018–present",engine:"Petrol / plug-in hybrid variants",desc:"Family SUV · Demo catalogue entry",icon:"🚙"},
+ {make:"Tesla",model:"Model 3",years:"2017–present",engine:"Battery electric",desc:"Electric saloon · Demo catalogue entry",icon:"⚡"},
+ {make:"Tesla",model:"Model Y",years:"2020–present",engine:"Battery electric",desc:"Electric SUV · Demo catalogue entry",icon:"⚡"},
+ {make:"MINI",model:"Cooper",years:"2001–present",engine:"Petrol / electric variants by generation",desc:"Small hatchback · Demo catalogue entry",icon:"🚗"},
+ {make:"Volvo",model:"XC40",years:"2017–present",engine:"Petrol / hybrid / electric variants",desc:"Compact SUV · Demo catalogue entry",icon:"🚙"},
+ {make:"Audi",model:"A3",years:"2003–present",engine:"Petrol / diesel / plug-in hybrid variants",desc:"Premium hatchback / saloon · Demo catalogue entry",icon:"🚘"},
+ {make:"Škoda",model:"Octavia",years:"1996–present",engine:"Petrol / diesel / plug-in hybrid variants",desc:"Practical hatchback / estate · Demo catalogue entry",icon:"🚗"},
+ {make:"Škoda",model:"Enyaq",years:"2020–present",engine:"Battery electric",desc:"Electric family SUV · Demo catalogue entry",icon:"⚡"}
+];
+const records=[
+ {type:"Parts",icon:"🔩",title:"Example stainless-steel cat-back exhaust",sub:"Citroën C1 · compatibility must be verified",detail:"Example listing — not a live product feed",price:"£129.99"},
+ {type:"Parts",icon:"🌀",title:"Replacement air filter",sub:"Check engine code and filter dimensions",detail:"Example listing — check exact fitment",price:"£24.99"},
+ {type:"Mods",icon:"🛞",title:"Wheel and tyre upgrade ideas",sub:"Offset, size, load rating and clearance matter",detail:"Community inspiration",price:"Ideas"},
+ {type:"Guides",icon:"📘",title:"How to check your engine oil",sub:"Basic maintenance guide · confirm owner's manual",detail:"6 min read · example guide",price:"Read"},
+ {type:"Guides",icon:"▶",title:"Understanding warning lights",sub:"Identify the light and check your handbook",detail:"Video collection · example links",price:"Watch"},
+ {type:"Forums",icon:"💬",title:"Best mods for a daily C1?",sub:"Owners discuss comfort, sound and cost",detail:"23 replies · sample discussion",price:"Open"},
+ {type:"Forums",icon:"💬",title:"Common reliability questions",sub:"Compare symptoms and service history",detail:"17 replies · sample discussion",price:"Open"},
+ {type:"Mods",icon:"✨",title:"Subtle exterior styling ideas",sub:"Check visibility, legality and secure fitment",detail:"Community build ideas",price:"Ideas"},
+ {type:"Guides",icon:"🧰",title:"Preparing for a routine service",sub:"Use the correct schedule and specifications",detail:"Checklist · example guide",price:"Read"}
+];
+let activeFilter="All", garage=[{make:"Citroën",model:"C1",year:"2013",engine:"1.0 petrol"}], myMods=[{name:"Ram air intake",cost:"45"},{name:"Sports exhaust",cost:"130"},{name:"Window tints (15%)",cost:"90"}], posts=[
+ {title:"Best mods for a daily C1?",body:"Looking to improve the look and sound without making it uncomfortable.",author:"C1_XRS",replies:23,time:"2h ago"},
+ {title:"Reliability questions: what should I check?",body:"Any common issues I should watch out for when viewing one?",author:"RoadReady",replies:17,time:"5h ago"},
+ {title:"Exhaust recommendations",body:"Looking for a deeper sound while staying road legal.",author:"LittleHatch",replies:31,time:"1d ago"},
+ {title:"Show us your builds",body:"Post photos and list the modifications you've made.",author:"GarageClub",replies:48,time:"2d ago"}
+];
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));window.scrollTo({top:0,behavior:'smooth'});if(p==='cars')renderCars();if(p==='mods')renderMods();if(p==='guides')renderGuides();if(p==='forums')renderForums();if(p==='community')renderGarage()}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
+function notify(s){const t=document.getElementById('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+function openModal(id){document.getElementById(id).classList.add('open')}function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+function selectVehicle(make,model,years,engine){window.currentVehicle={make,model,years,engine};notify('Selected '+make+' '+model+' · '+years);showPage('search');document.getElementById('mainSearch').value=model;renderSearch('mainSearch','mainResults')}
+document.getElementById('heroMake').addEventListener('change',function(){const map={};vehicles.forEach(v=>{(map[v.make] ||= []).push(v.model)});Object.keys(map).forEach(k=>map[k]=[...new Set(map[k])]);document.getElementById('heroModel').innerHTML='<option value="">Choose model</option>'+(map[this.value]||[]).map(m=>`<option>${m}</option>`).join('')});
+function findHeroCar(){let make=document.getElementById('heroMake').value,model=document.getElementById('heroModel').value;if(!make||!model){notify('Choose a make and model first');return}let v=vehicles.find(v=>v.make===make&&v.model===model);selectVehicle(make,model,v?.years||'Year not selected',v?.engine||'Engine not selected')}
+function renderSearch(inputId,outId){const q=(document.getElementById(inputId)?.value||'').toLowerCase().trim();const filtered=records.filter(r=>(activeFilter==='All'||r.type===activeFilter)&&(!q||(r.title+' '+r.sub+' '+r.type+' '+r.detail).toLowerCase().includes(q)));document.getElementById(outId).innerHTML=filtered.length?filtered.map(r=>`<div class="result"><div class="thumb">${r.icon}</div><div><h4>${esc(r.title)}</h4><p>${esc(r.sub)}</p><p>${esc(r.detail)}</p></div><div class="price"><b>${esc(r.price)}</b><button class="ghost" onclick="notify('Demo item opened — live links are not connected')">${r.type==='Forums'?'Open':r.type==='Guides'?'View':'Details'}</button></div></div>`).join(''):'<div class="empty">No demo results. Try “exhaust”, “guide” or “C1”.</div>'}
+document.querySelectorAll('#searchFilters button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#searchFilters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;renderSearch('mainSearch','mainResults')}));
+function renderCars(){let q=(document.getElementById('carSearch')?.value||'').toLowerCase();let arr=vehicles.filter(v=>(v.make+' '+v.model+' '+v.years+' '+v.engine).toLowerCase().includes(q));document.getElementById('vehicleGrid').innerHTML=arr.map(v=>`<div class="vehicle-card"><div class="big-emoji">${v.icon}</div><h3>${esc(v.make)} ${esc(v.model)}</h3><p>${esc(v.years)}<br>${esc(v.engine)}<br>${esc(v.desc)}</p><button class="primary" onclick="selectVehicle('${esc(v.make)}','${esc(v.model)}','${esc(v.years)}','${esc(v.engine)}')">Open vehicle →</button></div>`).join('')||'<div class="empty">No match yet. Request this vehicle and add it to the demo catalogue.</div>'}
+function renderMods(){let f=window.modFilter||'All';let arr=records.filter(r=>r.type==='Parts'||r.type==='Mods').filter(r=>f==='All'||(f==='Performance'&&/exhaust|filter/i.test(r.title))||(f==='Styling'&&/wheel|styling/i.test(r.title))||(f==='Maintenance'&&/filter/i.test(r.title)));document.getElementById('modResults').innerHTML=arr.map(r=>`<div class="vehicle-card"><div class="big-emoji">${r.icon}</div><span class="pill">${r.type}</span><h3>${esc(r.title)}</h3><p>${esc(r.sub)}</p><p>${esc(r.detail)}</p><button class="ghost" onclick="notify('Saved to demo shortlist')">＋ Save to shortlist</button></div>`).join('')}
+document.querySelectorAll('#modFilters button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#modFilters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');window.modFilter=b.dataset.filter;renderMods()}));
+function renderGuides(){let q=(document.getElementById('guideSearch')?.value||'').toLowerCase();let arr=records.filter(r=>r.type==='Guides'&&(!q||(r.title+' '+r.sub).toLowerCase().includes(q)));document.getElementById('guideResults').innerHTML=arr.map(r=>`<div class="result"><div class="thumb">${r.icon}</div><div><h4>${esc(r.title)}</h4><p>${esc(r.sub)}</p><p>${esc(r.detail)}</p></div><div class="price"><button class="primary" onclick="notify('Guide preview — connect real content before launch')">Open guide</button></div></div>`).join('')||'<div class="empty">No guides match that search.</div>'}
+function forumHTML(p){return `<div class="forum-item"><div class="avatar">${esc(p.author.slice(0,1).toUpperCase())}</div><div><h4>${esc(p.title)}</h4><p>${esc(p.body)}</p><small>${esc(p.author)} · ${p.replies} replies · ${esc(p.time)}</small></div></div>`}
+function renderForums(){document.getElementById('forumList').innerHTML=posts.map(forumHTML).join('')}
+function renderGarage(){document.getElementById('garageList').innerHTML=garage.map((g,i)=>`<div class="modline"><div class="modicon">🚗</div><div><b>${esc(g.make)} ${esc(g.model)}</b><small>${esc(g.year||'Year not specified')} · ${esc(g.engine||'Engine not specified')}</small></div><button class="ghost" onclick="selectVehicle('${esc(g.make)}','${esc(g.model)}','${esc(g.year||'Year not specified')}','${esc(g.engine||'Engine not specified')}')">Open</button></div>`).join('')||'<div class="empty">No cars saved yet.</div>';document.getElementById('myMods').innerHTML=myMods.map(m=>`<div class="modline"><div class="modicon">🧰</div><div><b>${esc(m.name)}</b><small>Saved in your demo garage</small></div><strong>${m.cost?'£'+esc(m.cost):'—'}</strong></div>`).join('')||'<div class="empty">Add your first modification.</div>'}
+function addGarageCar(){let make=document.getElementById('garageMake').value,model=document.getElementById('garageModel').value,year=document.getElementById('garageYear').value.trim();garage.push({make,model,year,engine:'Not specified'});closeModal('profileModal');renderGarage();notify('Car added to this browser’s demo garage')}
+function requestCar(){let make=document.getElementById('reqMake').value.trim(),model=document.getElementById('reqModel').value.trim(),years=document.getElementById('reqYear').value.trim()||'Years not specified';if(!make||!model){notify('Enter a make and model');return}vehicles.push({make,model,years,engine:'Details to be confirmed',desc:'User-requested demo entry',icon:'🚘'});closeModal('addCarModal');renderCars();notify('Demo vehicle added to catalogue')}
+function addPost(){let title=document.getElementById('postTitle').value.trim(),body=document.getElementById('postBody').value.trim();if(!title){notify('Add a discussion title');return}posts.unshift({title,body:body||'No extra details added.',author:'You',replies:0,time:'just now'});closeModal('postModal');renderForums();notify('Demo discussion published')}
+function addMod(){let name=document.getElementById('modName').value.trim(),cost=document.getElementById('modCost').value;if(!name){notify('Enter a modification');return}myMods.unshift({name,cost});closeModal('modModal');renderGarage();notify('Modification added to demo garage')}
+function sendChat(){const input=document.getElementById('chatInput'),q=input.value.trim();if(!q)return;const log=document.getElementById('chatlog');log.insertAdjacentHTML('beforeend',`<div class="bubble user">${esc(q)}</div>`);input.value='';let ans;if(/exhaust|part|fit|compatible/i.test(q))ans='Start by confirming the exact generation, engine and any part number. This demo has example listings only, so it cannot confirm fitment or current prices. In a live MOTORBASE, I would search verified fitment data and link the sources.';else if(/oil|service|mainten|warning|fault|repair|fix/i.test(q))ans='I can help you find a relevant guide, but this demo is not connected to repair manuals or diagnostic data. Check the owner’s handbook and use a qualified mechanic for safety-critical faults. A live version would cite its sources.';else if(/forum|community|post|account|garage/i.test(q))ans='Try the Community tab to save a demo car, add a modification or publish a sample forum discussion. Changes currently stay in this browser session and are not shared with other people.';else ans='Good question! This prototype uses scripted sample replies rather than a live AI model. The planned version would use your selected vehicle plus trusted guides, parts data and forum posts to produce a sourced answer.';log.insertAdjacentHTML('beforeend',`<div class="bubble bot">${esc(ans)}</div>`);log.scrollTop=log.scrollHeight}
+document.getElementById('homeForum').innerHTML=posts.slice(0,3).map(forumHTML).join('');
+renderSearch('homeSearch','homeResults');renderSearch('mainSearch','mainResults');renderCars();renderMods();renderGuides();renderForums();renderGarage();
+</script>
+</body>
+</html>
