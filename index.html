@@ -249,7 +249,7 @@ async function loadVehiclesDB() {
   vehicleDataLoaded = true;
   const status = `Global catalogue loaded: ${vehicles.length.toLocaleString()} car makes/models available; ${added.toLocaleString()} added to the starter list.`;
   const credit = document.getElementById("vehicleDataCredit");
-  if (credit) credit.textContent = status + " Source: VehiclesDB, CC BY 4.0. Engine, trim and exact model-year data are not supplied for every record.";
+  if (credit) credit.textContent = status + " Source: VehiclesDB, CC BY 4.0. Search ignores capital letters and accents. Engine, trim, generation and exact model-year data are added only when verified from a source.";
  } catch (error) {
   const credit = document.getElementById("vehicleDataCredit");
   if (credit) credit.textContent = "The global catalogue could not load right now; the built-in starter list is shown instead. Check your connection and refresh to try again.";
@@ -281,6 +281,25 @@ function notify(s){const t=document.getElementById('toast');t.textContent=s;t.cl
 function openModal(id){document.getElementById(id).classList.add('open')}function closeModal(id){document.getElementById(id).classList.remove('open')}
 document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
 function selectVehicle(make,model,years,engine){window.currentVehicle={make,model,years,engine};notify('Selected '+make+' '+model+' · '+years);showPage('search');document.getElementById('mainSearch').value=model;renderSearch('mainSearch','mainResults')}
+// Extensible variant schema: unknown values stay blank until verified from a reliable source.
+function vehicleVariantRecord(vehicle, details = {}) {
+ return {
+  make: vehicle.make,
+  model: vehicle.model,
+  generation: details.generation || null,
+  yearStart: Number.isInteger(details.yearStart) ? details.yearStart : null,
+  yearEnd: Number.isInteger(details.yearEnd) ? details.yearEnd : null,
+  market: details.market || null,
+  engineCode: details.engineCode || null,
+  engineDisplacementCc: Number.isFinite(details.engineDisplacementCc) ? details.engineDisplacementCc : null,
+  fuelType: details.fuelType || null,
+  powerKw: Number.isFinite(details.powerKw) ? details.powerKw : null,
+  trim: details.trim || null,
+  sourceName: details.sourceName || null,
+  sourceUrl: details.sourceUrl || null,
+  verified: details.verified === true
+ };
+}
 function heroVehicleLabel(v){return `${v.make} ${v.model} · ${v.years} · ${v.engine}`}
 function suggestHeroCars(){
  const input=document.getElementById('heroCarSearch');
@@ -312,7 +331,7 @@ function findHeroCar(){
 }
 function renderSearch(inputId,outId){const q=(document.getElementById(inputId)?.value||'').toLowerCase().trim();const filtered=records.filter(r=>(activeFilter==='All'||r.type===activeFilter)&&(!q||(r.title+' '+r.sub+' '+r.type+' '+r.detail).toLowerCase().includes(q)));document.getElementById(outId).innerHTML=filtered.length?filtered.map(r=>`<div class="result"><div class="thumb">${r.icon}</div><div><h4>${esc(r.title)}</h4><p>${esc(r.sub)}</p><p>${esc(r.detail)}</p></div><div class="price"><b>${esc(r.price)}</b><button class="ghost" onclick="notify('Demo item opened — live links are not connected')">${r.type==='Forums'?'Open':r.type==='Guides'?'View':'Details'}</button></div></div>`).join(''):'<div class="empty">No demo results. Try “exhaust”, “guide” or “C1”.</div>'}
 document.querySelectorAll('#searchFilters button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#searchFilters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');activeFilter=b.dataset.filter;renderSearch('mainSearch','mainResults')}));
-function normText(s){return String(s||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase()}
+function normText(value){return String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLocaleLowerCase().trim()}
 function initCarFilters(){const sel=document.getElementById('makeFilter');if(!sel)return;const current=sel.value;const makes=[...new Set(vehicles.map(v=>v.make))].sort((a,b)=>a.localeCompare(b));sel.innerHTML='<option value="">All makes</option>'+makes.map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join('');sel.value=current}
 function resetCarFilters(){['carSearch','makeFilter','fuelFilter','typeFilter'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});renderCars()}
 function renderCars(){initCarFilters();const q=normText(document.getElementById('carSearch')?.value||'');const make=document.getElementById('makeFilter')?.value||'';const fuel=normText(document.getElementById('fuelFilter')?.value||'');const type=document.getElementById('typeFilter')?.value||'';const arr=vehicles.filter(v=>{const searchable=normText([v.make,v.model,v.years,v.engine,v.desc].join(' '));return (!q||searchable.includes(q))&&(!make||v.make===make)&&(!fuel||normText(v.engine).includes(fuel))&&(!type||(type==='⚡'?v.icon==='⚡':type==='🏎️'?v.icon==='🏎️':v.icon===type));});const count=document.getElementById('vehicleCount');if(count)count.textContent=`Showing ${arr.length.toLocaleString()} of ${vehicles.length.toLocaleString()} catalogue vehicles${vehicleDataLoaded?"":" (starter list while loading)"}`;document.getElementById('vehicleGrid').innerHTML=arr.map(v=>`<div class="vehicle-card"><div class="big-emoji">${v.icon}</div><div class="vehicle-meta">${esc(v.years)}</div><div class="card-title"><h3>${esc(v.make)} ${esc(v.model)}</h3></div><p>${esc(v.engine)}<br>${esc(v.desc)}</p><button class="primary" onclick="selectVehicle('${esc(v.make)}','${esc(v.model)}','${esc(v.years)}','${esc(v.engine)}')">Open vehicle →</button></div>`).join('')||'<div class="empty">No cars match those filters. Try a broader search or request this vehicle.</div>'}
