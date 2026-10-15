@@ -87,14 +87,14 @@ header{position:sticky;top:0;z-index:10;background:#090d10ed;backdrop-filter:blu
 </section>
 
 <section id="page-cars" class="page">
- <div class="subhero"><div class="eyebrow">UK-focused vehicle catalogue</div><h1>Browse cars</h1><p>Search a growing UK-focused catalogue by make, model, year, engine or powertrain. Filter the results, then open a vehicle profile. Registration lookup can be added later.</p></div>
+ <div class="subhero"><div class="eyebrow">Worldwide vehicle catalogue</div><h1>Browse cars</h1><p>Search a global catalogue of car makes and models from multiple official registers. Filter by make, model, body type or country evidence. Engine, trim and exact model-year data are added separately when verified.</p></div>
  <div class="searchrow"><input id="carSearch" placeholder="Search make, model, year, engine or fuel type…" oninput="renderCars()" aria-label="Search cars"><button class="primary" onclick="openModal('addCarModal')">＋ Request a car</button></div>
  <div class="searchrow vehicle-filters">
   <select id="makeFilter" aria-label="Filter by make" onchange="renderCars()"><option value="">All makes</option></select>
   <select id="fuelFilter" aria-label="Filter by powertrain" onchange="renderCars()"><option value="">All powertrains</option><option value="petrol">Petrol</option><option value="diesel">Diesel</option><option value="hybrid">Hybrid</option><option value="electric">Electric</option><option value="plug-in hybrid">Plug-in hybrid</option></select>
   <select id="typeFilter" aria-label="Filter by vehicle type" onchange="renderCars()"><option value="">All vehicle types</option><option value="🚗">Small cars / hatchbacks</option><option value="🚙">SUVs / crossovers</option><option value="🚘">Saloon / executive</option><option value="⚡">Electric</option><option value="🏎️">Sports cars</option></select>
  </div>
- <div class="catalogue-meta"><span id="vehicleCount" aria-live="polite">Loading vehicles…</span><button class="ghost" onclick="resetCarFilters()">Reset filters</button></div>
+ <div class="catalogue-meta"><span id="vehicleCount" aria-live="polite">Loading global vehicle catalogue…</span><button class="ghost" onclick="resetCarFilters()">Reset filters</button></div><p class="hint" id="vehicleDataCredit">Global make/model data supplied by VehiclesDB under CC BY 4.0. Exact year, engine and part compatibility are not guaranteed by this catalogue.</p>
  <div id="vehicleGrid" class="vehicle-grid"></div>
 </section>
 
@@ -194,6 +194,69 @@ const vehicles=[
  {make:"Cupra",model:"Formentor",years:"2020–present",engine:"Petrol / plug-in hybrid variants",desc:"Sporty crossover · Demo entry",icon:"🚙"},
  {make:"Polestar",model:"2",years:"2020–present",engine:"Battery electric",desc:"Electric fastback · Demo entry",icon:"⚡"}
 ];
+const vehicleDataSource = "https://cdn.jsdelivr.net/gh/vehiclesdb/vehiclesdb@v2026.10.3/dist/vehicles.json";
+let vehicleDataLoaded = false;
+
+function vehicleKey(make, model) {
+ return normText(make).replace(/[^a-z0-9]/g,"") + "|" + normText(model).replace(/[^a-z0-9]/g,"");
+}
+function vehicleIconFor(bodyTypes, name) {
+ const body = normText([...(Array.isArray(bodyTypes) ? bodyTypes : []), name || ""].join(" "));
+ if (/motorcycle|scooter|moped|motorbike/.test(body)) return "🏍️";
+ if (/van|minibus/.test(body)) return "🚐";
+ if (/truck|pickup|lorry/.test(body)) return "🚚";
+ if (/bus|coach/.test(body)) return "🚌";
+ if (/suv|crossover|4x4/.test(body)) return "🚙";
+ if (/coupe|sports|roadster|convertible/.test(body)) return "🏎️";
+ return "🚗";
+}
+async function loadVehiclesDB() {
+ try {
+  const response = await fetch(vehicleDataSource, {cache:"force-cache"});
+  if (!response.ok) throw new Error("Catalogue request failed: " + response.status);
+  const data = await response.json();
+  const makes = Array.isArray(data.makes) ? data.makes : [];
+  const known = new Set(vehicles.map(v => vehicleKey(v.make, v.model)));
+  let added = 0;
+  for (const make of makes) {
+   if (!make || !Array.isArray(make.models)) continue;
+   for (const model of make.models) {
+    if (!model || model.kind !== "car" || !model.name || !make.name) continue;
+    const key = vehicleKey(make.name, model.name);
+    if (known.has(key)) continue;
+    const bodyTypes = Array.isArray(model.body_types) ? model.body_types : [];
+    const availability = model.availability;
+    const countries = Array.isArray(availability)
+      ? availability.map(a => typeof a === "string" ? a : (a.country || a.country_code || "")).filter(Boolean)
+      : [];
+    const bodyLabel = bodyTypes.length ? bodyTypes.join(", ") : "Body style not supplied";
+    const countryLabel = countries.length ? "Market evidence: " + countries.join(", ") : "Market evidence varies by source";
+    vehicles.push({
+     make: make.name,
+     model: model.name,
+     years: "Model years not supplied",
+     engine: "Engine / trim data not supplied",
+     desc: bodyLabel + " · " + countryLabel + " · Global catalogue record",
+     icon: vehicleIconFor(bodyTypes, model.name),
+     sourceId: model.slug || "",
+     sourceKind: "car",
+     sourceCountries: countries
+    });
+    known.add(key);
+    added++;
+   }
+  }
+  vehicleDataLoaded = true;
+  const status = `Global catalogue loaded: ${vehicles.length.toLocaleString()} car makes/models available; ${added.toLocaleString()} added to the starter list.`;
+  const credit = document.getElementById("vehicleDataCredit");
+  if (credit) credit.textContent = status + " Source: VehiclesDB, CC BY 4.0. Engine, trim and exact model-year data are not supplied for every record.";
+ } catch (error) {
+  const credit = document.getElementById("vehicleDataCredit");
+  if (credit) credit.textContent = "The global catalogue could not load right now; the built-in starter list is shown instead. Check your connection and refresh to try again.";
+ }
+ suggestHeroCars();
+ renderCars();
+}
 const records=[
  {type:"Parts",icon:"🔩",title:"Example stainless-steel cat-back exhaust",sub:"Citroën C1 · compatibility must be verified",detail:"Example listing — not a live product feed",price:"£129.99"},
  {type:"Parts",icon:"🌀",title:"Replacement air filter",sub:"Check engine code and filter dimensions",detail:"Example listing — check exact fitment",price:"£24.99"},
@@ -226,7 +289,7 @@ function suggestHeroCars(){
  const q=normText(input.value.trim());
  const matches=vehicles.filter(v=>!q||normText([v.make,v.model,v.years,v.engine,v.desc].join(' ')).includes(q)).slice(0,30);
  list.innerHTML=matches.map(v=>`<option value="${esc(heroVehicleLabel(v))}"></option>`).join('');
- hint.textContent=q?`${matches.length} matching demo vehicle${matches.length===1?'':'s'} shown in suggestions. Choose one or keep typing.`:'⌁ Search by make, model, year, engine or fuel type — no registration needed.';
+ hint.textContent=q?`${matches.length} matching vehicle${matches.length===1?'':'s'} shown in suggestions. Choose one or keep typing.`:(vehicleDataLoaded?`Search ${vehicles.length.toLocaleString()} catalogue entries by make or model. Exact years and engine details vary.`:'⌁ Search by make, model, year, engine or fuel type — no registration needed.');
 }
 function findHeroCar(){
  const input=document.getElementById('heroCarSearch');
@@ -252,7 +315,7 @@ document.querySelectorAll('#searchFilters button').forEach(b=>b.addEventListener
 function normText(s){return String(s||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase()}
 function initCarFilters(){const sel=document.getElementById('makeFilter');if(!sel)return;const current=sel.value;const makes=[...new Set(vehicles.map(v=>v.make))].sort((a,b)=>a.localeCompare(b));sel.innerHTML='<option value="">All makes</option>'+makes.map(m=>`<option value="${esc(m)}">${esc(m)}</option>`).join('');sel.value=current}
 function resetCarFilters(){['carSearch','makeFilter','fuelFilter','typeFilter'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});renderCars()}
-function renderCars(){initCarFilters();const q=normText(document.getElementById('carSearch')?.value||'');const make=document.getElementById('makeFilter')?.value||'';const fuel=normText(document.getElementById('fuelFilter')?.value||'');const type=document.getElementById('typeFilter')?.value||'';const arr=vehicles.filter(v=>{const searchable=normText([v.make,v.model,v.years,v.engine,v.desc].join(' '));return (!q||searchable.includes(q))&&(!make||v.make===make)&&(!fuel||normText(v.engine).includes(fuel))&&(!type||(type==='⚡'?v.icon==='⚡':type==='🏎️'?v.icon==='🏎️':v.icon===type));});const count=document.getElementById('vehicleCount');if(count)count.textContent=`Showing ${arr.length} of ${vehicles.length} demo vehicles`;document.getElementById('vehicleGrid').innerHTML=arr.map(v=>`<div class="vehicle-card"><div class="big-emoji">${v.icon}</div><div class="vehicle-meta">${esc(v.years)}</div><div class="card-title"><h3>${esc(v.make)} ${esc(v.model)}</h3></div><p>${esc(v.engine)}<br>${esc(v.desc)}</p><button class="primary" onclick="selectVehicle('${esc(v.make)}','${esc(v.model)}','${esc(v.years)}','${esc(v.engine)}')">Open vehicle →</button></div>`).join('')||'<div class="empty">No cars match those filters. Try a broader search or request this vehicle.</div>'}
+function renderCars(){initCarFilters();const q=normText(document.getElementById('carSearch')?.value||'');const make=document.getElementById('makeFilter')?.value||'';const fuel=normText(document.getElementById('fuelFilter')?.value||'');const type=document.getElementById('typeFilter')?.value||'';const arr=vehicles.filter(v=>{const searchable=normText([v.make,v.model,v.years,v.engine,v.desc].join(' '));return (!q||searchable.includes(q))&&(!make||v.make===make)&&(!fuel||normText(v.engine).includes(fuel))&&(!type||(type==='⚡'?v.icon==='⚡':type==='🏎️'?v.icon==='🏎️':v.icon===type));});const count=document.getElementById('vehicleCount');if(count)count.textContent=`Showing ${arr.length.toLocaleString()} of ${vehicles.length.toLocaleString()} catalogue vehicles${vehicleDataLoaded?"":" (starter list while loading)"}`;document.getElementById('vehicleGrid').innerHTML=arr.map(v=>`<div class="vehicle-card"><div class="big-emoji">${v.icon}</div><div class="vehicle-meta">${esc(v.years)}</div><div class="card-title"><h3>${esc(v.make)} ${esc(v.model)}</h3></div><p>${esc(v.engine)}<br>${esc(v.desc)}</p><button class="primary" onclick="selectVehicle('${esc(v.make)}','${esc(v.model)}','${esc(v.years)}','${esc(v.engine)}')">Open vehicle →</button></div>`).join('')||'<div class="empty">No cars match those filters. Try a broader search or request this vehicle.</div>'}
 function renderMods(){let f=window.modFilter||'All';let arr=records.filter(r=>r.type==='Parts'||r.type==='Mods').filter(r=>f==='All'||(f==='Performance'&&/exhaust|filter/i.test(r.title))||(f==='Styling'&&/wheel|styling/i.test(r.title))||(f==='Maintenance'&&/filter/i.test(r.title)));document.getElementById('modResults').innerHTML=arr.map(r=>`<div class="vehicle-card"><div class="big-emoji">${r.icon}</div><span class="pill">${r.type}</span><h3>${esc(r.title)}</h3><p>${esc(r.sub)}</p><p>${esc(r.detail)}</p><button class="ghost" onclick="notify('Saved to demo shortlist')">＋ Save to shortlist</button></div>`).join('')}
 document.querySelectorAll('#modFilters button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('#modFilters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');window.modFilter=b.dataset.filter;renderMods()}));
 function renderGuides(){let q=(document.getElementById('guideSearch')?.value||'').toLowerCase();let arr=records.filter(r=>r.type==='Guides'&&(!q||(r.title+' '+r.sub).toLowerCase().includes(q)));document.getElementById('guideResults').innerHTML=arr.map(r=>`<div class="result"><div class="thumb">${r.icon}</div><div><h4>${esc(r.title)}</h4><p>${esc(r.sub)}</p><p>${esc(r.detail)}</p></div><div class="price"><button class="primary" onclick="notify('Guide preview — connect real content before launch')">Open guide</button></div></div>`).join('')||'<div class="empty">No guides match that search.</div>'}
@@ -265,7 +328,7 @@ function addPost(){let title=document.getElementById('postTitle').value.trim(),b
 function addMod(){let name=document.getElementById('modName').value.trim(),cost=document.getElementById('modCost').value;if(!name){notify('Enter a modification');return}myMods.unshift({name,cost});closeModal('modModal');renderGarage();notify('Modification added to demo garage')}
 function sendChat(){const input=document.getElementById('chatInput'),q=input.value.trim();if(!q)return;const log=document.getElementById('chatlog');log.insertAdjacentHTML('beforeend',`<div class="bubble user">${esc(q)}</div>`);input.value='';let ans;if(/exhaust|part|fit|compatible/i.test(q))ans='Start by confirming the exact generation, engine and any part number. This demo has example listings only, so it cannot confirm fitment or current prices. In a live Carnet, I would search verified fitment data and link the sources.';else if(/oil|service|mainten|warning|fault|repair|fix/i.test(q))ans='I can help you find a relevant guide, but this demo is not connected to repair manuals or diagnostic data. Check the owner’s handbook and use a qualified mechanic for safety-critical faults. A live version would cite its sources.';else if(/forum|community|post|account|garage/i.test(q))ans='Try the Community tab to save a demo car, add a modification or publish a sample forum discussion. Changes currently stay in this browser session and are not shared with other people.';else ans='Good question! This prototype uses scripted sample replies rather than a live AI model. The planned version would use your selected vehicle plus trusted guides, parts data and forum posts to produce a sourced answer.';log.insertAdjacentHTML('beforeend',`<div class="bubble bot">${esc(ans)}</div>`);log.scrollTop=log.scrollHeight}
 document.getElementById('homeForum').innerHTML=posts.slice(0,3).map(forumHTML).join('');
-renderSearch('homeSearch','homeResults');renderSearch('mainSearch','mainResults');renderCars();renderMods();renderGuides();renderForums();renderGarage();
+renderSearch('homeSearch','homeResults');renderSearch('mainSearch','mainResults');renderCars();renderMods();renderGuides();renderForums();renderGarage();loadVehiclesDB();
 </script>
 </body>
 </html>
