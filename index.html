@@ -212,6 +212,12 @@ const vehicles=[
 ];
 const vehicleDataSource = "https://cdn.jsdelivr.net/gh/vehiclesdb/vehiclesdb@v2026.10.3/dist/vehicles.json";
 let vehicleDataLoaded = false;
+let vehicleDataPromise = null;
+function ensureVehiclesLoaded() {
+ if (vehicleDataLoaded) return Promise.resolve();
+ if (!vehicleDataPromise) vehicleDataPromise = loadVehiclesDB();
+ return vehicleDataPromise;
+}
 
 function vehicleKey(make, model) {
  return normText(make).replace(/[^a-z0-9]/g,"") + "|" + normText(model).replace(/[^a-z0-9]/g,"");
@@ -291,7 +297,7 @@ let activeFilter="All", garage=[{make:"Citroën",model:"C1",year:"2013",engine:"
  {title:"Show us your builds",body:"Post photos and list the modifications you've made.",author:"GarageClub",replies:48,time:"2d ago"}
 ];
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));window.scrollTo({top:0,behavior:'smooth'});if(p==='search')renderSelectedVehiclePanel();if(p==='cars')renderCars();if(p==='mods')renderMods();if(p==='guides')renderGuides();if(p==='forums')renderForums();if(p==='community')renderGarage()}
+function showPage(p){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page-'+p).classList.add('active');document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===p));window.scrollTo({top:0,behavior:'smooth'});if(p==='search')renderSelectedVehiclePanel();if(p==='cars'){renderCars();ensureVehiclesLoaded();}if(p==='mods')renderMods();if(p==='guides')renderGuides();if(p==='forums')renderForums();if(p==='community')renderGarage()}
 document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showPage(b.dataset.page)));
 function notify(s){const t=document.getElementById('toast');t.textContent=s;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
 function openModal(id){document.getElementById(id).classList.add('open')}function closeModal(id){document.getElementById(id).classList.remove('open')}
@@ -342,11 +348,11 @@ async function openVehicleDetails(vehicle){
   return;
  }
  const makes=Array.isArray(data?.makes)?data.makes:[];
- const matchedMake=makes.find(m=>normText(m.name)===normText(vehicle.make))||makes.find(m=>normText(m.name).includes(normText(vehicle.make))||normText(vehicle.make).includes(normText(m.name)))||makes[0];
- const models=Array.isArray(matchedMake?.models)?matchedMake.models:[];
- const matchedModels=models.filter(m=>normText(m.name)===normText(vehicle.model));
- const finalModels=matchedModels.length?matchedModels:models.filter(m=>normText(m.name).includes(normText(vehicle.model))||normText(vehicle.model).includes(normText(m.name))).slice(0,5);
- if(!finalModels.length){intro.textContent="This dataset did not contain an exact model match for this make. No engine details have been guessed.";body.innerHTML=`<div class="detail-grid">${vehicleDetailHtml("Make",vehicle.make)}${vehicleDetailHtml("Model",vehicle.model)}${vehicleDetailHtml("Catalogue years",vehicle.years)}${vehicleDetailHtml("Existing engine note",vehicle.engine)}</div><div class="empty">No matching model found in the engine dataset for this make. Coverage is incomplete, especially for some markets and historic vehicles.</div>`;return}
+ const matchedMake=makes.find(m=>normText(m.name)===normText(vehicle.make));
+ if(!matchedMake){intro.textContent="This engine dataset does not contain a confirmed make match.";body.innerHTML=`<div class="detail-grid">${vehicleDetailHtml("Make",vehicle.make)}${vehicleDetailHtml("Model",vehicle.model)}${vehicleDetailHtml("Catalogue years",vehicle.years)}${vehicleDetailHtml("Existing engine note",vehicle.engine)}</div><div class="empty">No exact make match was found in the engine dataset. Carnet will not show another manufacturer's specifications as a substitute.</div>`;return}
+ const models=Array.isArray(matchedMake.models)?matchedMake.models:[];
+ const finalModels=models.filter(m=>normText(m.name)===normText(vehicle.model));
+ if(!finalModels.length){intro.textContent="This dataset did not contain an exact model match for this make. No engine details have been guessed.";body.innerHTML=`<div class="detail-grid">${vehicleDetailHtml("Make",vehicle.make)}${vehicleDetailHtml("Model",vehicle.model)}${vehicleDetailHtml("Catalogue years",vehicle.years)}${vehicleDetailHtml("Existing engine note",vehicle.engine)}</div><div class="empty">No exact model match was found in the engine dataset for this make. Similar names are not treated as the same vehicle because that could show incorrect specifications.</div>`;return}
  let engineCount=0,genCount=0;
  const sections=finalModels.map(model=>{
   const generations=Array.isArray(model.generations)?model.generations:[];genCount+=generations.length;
@@ -473,7 +479,9 @@ document.getElementById('carSearch').addEventListener('input',()=>{vehicleDispla
 ['makeFilter','fuelFilter','typeFilter'].forEach(id=>document.getElementById(id).addEventListener('change',()=>{vehicleDisplayLimit=48;renderCars()}));
 setupClearButtons();
 document.getElementById('homeForum').innerHTML=posts.slice(0,3).map(forumHTML).join('');
-renderSearch('homeSearch','homeResults');renderSearch('mainSearch','mainResults');renderCars();renderMods();renderGuides();renderForums();renderGarage();loadVehiclesDB();
+renderSearch('homeSearch','homeResults');renderSearch('mainSearch','mainResults');renderCars();renderMods();renderGuides();renderForums();renderGarage();
+// Keep the homepage lightweight: fetch the global catalogue only when someone starts searching or opens Browse cars.
+['heroCarSearch','carSearch'].forEach(id=>{const input=document.getElementById(id);if(input){input.addEventListener('focus',ensureVehiclesLoaded,{once:true});input.addEventListener('input',ensureVehiclesLoaded,{once:true});}});
 </script>
 </body>
 </html>
