@@ -351,7 +351,14 @@ async function openVehicleDetails(vehicle){
  const matchedMake=makes.find(m=>normText(m.name)===normText(vehicle.make));
  if(!matchedMake){intro.textContent="This engine dataset does not contain a confirmed make match.";body.innerHTML=`<div class="detail-grid">${vehicleDetailHtml("Make",vehicle.make)}${vehicleDetailHtml("Model",vehicle.model)}${vehicleDetailHtml("Catalogue years",vehicle.years)}${vehicleDetailHtml("Existing engine note",vehicle.engine)}</div><div class="empty">No exact make match was found in the engine dataset. Carnet will not show another manufacturer's specifications as a substitute.</div>`;return}
  const models=Array.isArray(matchedMake.models)?matchedMake.models:[];
- const finalModels=models.filter(m=>normText(m.name)===normText(vehicle.model));
+ const makeKey=normText(vehicle.make).replace(/[^a-z0-9]/g,"");
+  const modelKey=normText(vehicle.model).replace(/[^a-z0-9]/g,"");
+  // Some source records prefix the model name with the manufacturer (e.g. "CITROEN C1").
+  // Accept that exact make+model form, but do not use fuzzy/partial matching.
+  const finalModels=models.filter(m=>{
+   const sourceModelKey=normText(m.name).replace(/[^a-z0-9]/g,"");
+   return sourceModelKey===modelKey || sourceModelKey===makeKey+modelKey;
+  });
  if(!finalModels.length){intro.textContent="This dataset did not contain an exact model match for this make. No engine details have been guessed.";body.innerHTML=`<div class="detail-grid">${vehicleDetailHtml("Make",vehicle.make)}${vehicleDetailHtml("Model",vehicle.model)}${vehicleDetailHtml("Catalogue years",vehicle.years)}${vehicleDetailHtml("Existing engine note",vehicle.engine)}</div><div class="empty">No exact model match was found in the engine dataset for this make. Similar names are not treated as the same vehicle because that could show incorrect specifications.</div>`;return}
  let engineCount=0,genCount=0;
  const sections=finalModels.map(model=>{
